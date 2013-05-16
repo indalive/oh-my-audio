@@ -1,4 +1,4 @@
 oh-my-audio
 ===========
 
-Сosmic scripts for vk.com/audio
+Сosmic extensions for vk.com/audio
