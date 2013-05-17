@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        oh-my-audio.charts
 // @author   	Alexander Korkov
-// @description Last FM charts for vk.com/audio
+// @description last.fm charts for vk.com/audio
 // @include   	http://vk.com/*
 // @copyright   2013+, Alexander Korkov korkov@yandex.ru
 // @namespace   http://vk.com/*
@@ -10,6 +10,7 @@
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require     https://github.com/fxb/javascript-last.fm-api/raw/master/lastfm.api.md5.js
 // @require     https://raw.github.com/fxb/javascript-last.fm-api/master/lastfm.api.js
+// @require     https://raw.github.com/skor-ru/oh-my-audio/master/oh-my-audio.common.js
 // @run-at      document-end
 // ==/UserScript==
 
@@ -162,6 +163,5 @@ var lfm_menu = new function() {
 };
 
 lfm_menu.create();
-var title = document.getElementById("title");
-if (title)
-    title.addEventListener('DOMSubtreeModified', function() { lfm_menu.create(); });
+var page = new VKPage();
+page.change(lfm_menu.create);
