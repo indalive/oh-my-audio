@@ -7,6 +7,20 @@ function VKPage() {
         if (title)
             title.addEventListener('DOMSubtreeModified', call);
     }
+
+    this.audio_menu_item = function(desc, fn) {
+        var d = $('<div>', {
+            mouseout:  function() { if (Audio.listOut)  Audio.listOut(this); },
+            mouseover: function() { if (Audio.listOver) Audio.listOver(this); },
+            class: "audio_filter",
+            click: fn,
+        }).append($("<div>", {
+            class: "label",
+            text: desc,
+        }));
+
+        $("#album_filters").append(d);
+    }
 }
 
 function lang() {

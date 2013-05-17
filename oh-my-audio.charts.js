@@ -136,12 +136,11 @@ var vk_audio = new function() {
 var lfm_menu = new function() {
     var menu_id = "#album_filters";
 
-    function menu_item(id, desc, fn) {
+    function menu_item(desc, fn) {
         var d = $('<div>', {
             mouseout:  function() { if (Audio.listOut)  Audio.listOut(this); },
             mouseover: function() { if (Audio.listOver) Audio.listOver(this); },
             class: "audio_filter",
-            id: id,
             click: fn,
         }).append($("<div>", {
             class: "label",
@@ -153,15 +152,24 @@ var lfm_menu = new function() {
 
     this.create = function() {
         var items = [
-            menu_item("top_lfm_audios", "Популярное на last.fm", vk_audio.loader(lfm_api.top)),
-            menu_item("loved_lfm_audios", "Любимое на last.fm", vk_audio.loader(lfm_api.loved)),
-            menu_item("hyped_lfm_audios", "Набирает популярность на last.fm", vk_audio.loader(lfm_api.hyped)),
+            menu_item(_("Popular on last.fm"), vk_audio.loader(lfm_api.top)),
+            menu_item(_("Loved on last.fm"), vk_audio.loader(lfm_api.loved)),
+            menu_item(_("Hyped on last.fm"), vk_audio.loader(lfm_api.hyped)),
         ];
         var menu = $(menu_id);
         items.forEach(function(item){ menu.append(item) });
     }
 };
 
-lfm_menu.create();
-var page = new VKPage();
-page.change(lfm_menu.create);
+dictionary["Popular on last.fm"] = {
+    "ru": "Популярное на last.fm",
+    "ua": "Популярное на last.fm",
+};
+dictionary["Loved on last.fm"] = {
+    "ru": "Любимое на last.fm",
+    "ua": "Любимое на last.fm",
+};
+dictionary["Hyped on last.fm"] = {
+    "ru": "Набирает популярность на last.fm",
+    "ua": "Набирает популярность на last.fm",
+};
