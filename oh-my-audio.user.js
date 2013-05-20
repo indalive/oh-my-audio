@@ -1,14 +1,14 @@
 // ==UserScript==
-// @name        oh-my-audio
+// @name        Oh My Audio!
 // @author   	Alexander Korkov
-// @description Mp3 links for vk.com/audio
+// @description Cosmic extensions for vk.com/audio
 // @include   	http://vk.com/*
 // @copyright   2013+, Alexander Korkov korkov@yandex.ru
 // @namespace   http://vk.com/*
 // @version     1.0
 // @grant       none
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
-// @require     https://github.com/fxb/javascript-last.fm-api/raw/master/lastfm.api.md5.js
+// @require     https://raw.github.com/fxb/javascript-last.fm-api/master/lastfm.api.md5.js
 // @require     https://raw.github.com/fxb/javascript-last.fm-api/master/lastfm.api.js
 // @run-at      document-end
 // ==/UserScript==
