@@ -255,3 +255,5 @@ function binl2b64(binarray)
   }
   return str;
 }
+
+window.md5 = md5;
