@@ -58,30 +58,31 @@ var vkpage = new function() {
     }
 }
 
-function lang() {
-    switch ($("#myprofile").text()) {
-    case "Моя Страница":
-    case "Мой Паспортъ":
-    case "Мое Досье":  return "ru";
-    case "Моя Cторінка": return "ua";
-    default: return "en";
-    }
-}
-
 dictionary = {};
 
 function _(what) {
+    function lang() {
+        switch ($("#myprofile").text()) {
+        case "Моя Страница":
+        case "Мой Паспортъ":
+        case "Мое Досье":  return "ru";
+        case "Моя Cторінка": return "ua";
+        default: return "en";
+        }
+    }
+
     return (dictionary[what] && dictionary[what][lang()]) ?
         dictionary[what][lang()] : what;
 }
 
 var lfm_api = new function() {
-    var lastfm = new LastFM({apiKey : '489c0d6832706e11fec663cbdf5bccad', });
+    var lastfm = undefined;
+    lastfm = new LastFM({apiKey : '489c0d6832706e11fec663cbdf5bccad', });
 
     function opts() {
         return {
             autocorrect: 1,
-            limit: 5,
+            limit: 20,
         };
     }
     function callbacks(fn) {
@@ -107,14 +108,22 @@ var vk_audio = new function() {
         return lfm_track.artist.name + ' - ' + lfm_track.name;
     }
 
-    function clear(size) {
-        var to_hide = ["#audio_friends", "#audio_search_filters",
-        "#audio_search_info", "#audio_popular_filters", "#more_link", "#s_more_link"];
-        to_hide.forEach(function(elem) { $(elem).hide(); });
-        $("#s_search").val("");
+    var list = "#initial_list";
 
+    function clear(size) {
+        var to_hide = [
+            "#audio_friends",
+            "#audio_search_filters",
+            "#audio_search_info",
+            "#audio_popular_filters",
+            "#more_link",
+            "#s_more_link"
+        ];
+        to_hide.forEach(function(elem) { $(elem).hide(); });
+
+        $("#s_search").val("");
         $("#search_list").empty();
-        $("#initial_list").empty();
+        $(list).empty();
         $("#audios_list").append($("<div>", {
             style: "height: 400px;",
             text: " ",
@@ -122,19 +131,22 @@ var vk_audio = new function() {
     }
 
     function create_fake(tracks) {
-        $("#initial_list").empty();
+        $(list).empty();
         tracks.forEach(function(val) {
-            $("#initial_list").append($("<div>"));
+            $(list).append($("<div>"));
         });
     }
 
     function set_on_position(vk_track, position) {
-        var audio_div = $($("#initial_list").children()[position]);
+        var audio_div = $($(list).children()[position]);
         audio_div.replaceWith(vk_track);
     }
 
     function search(lfm_track, ready_fn) {
-        var query = {act: 'search', q: query_string(lfm_track), offset: 0, id: 0, gid: 0, performer: 0};
+        var query = {
+            act: 'search', q: query_string(lfm_track),
+            offset: 0, id: 0, gid: 0, performer: 0
+        };
 
         ajax.post(Audio.address, query, {
             onDone: function(res, preload, options) {
@@ -196,14 +208,17 @@ var vk_audio = new function() {
     };
 };
 
-function create_charts_menu() {
-    var items = [
-        vkpage.audio_menu_item(_("Popular on last.fm"), vk_audio.loader(lfm_api.top)),
-        vkpage.audio_menu_item(_("Loved on last.fm"), vk_audio.loader(lfm_api.loved)),
-        vkpage.audio_menu_item(_("Hyped on last.fm"), vk_audio.loader(lfm_api.hyped)),
-    ];
-    items.forEach(function(item) { vkpage.append_to_main_menu(item); });
-}
+var charts = new function() {
+
+    this.create_menu = function() {
+        var items = [
+            vkpage.audio_menu_item(_("Popular on last.fm"), vk_audio.loader(lfm_api.top)),
+            vkpage.audio_menu_item(_("Loved on last.fm"), vk_audio.loader(lfm_api.loved)),
+            vkpage.audio_menu_item(_("Hyped on last.fm"), vk_audio.loader(lfm_api.hyped)),
+        ];
+        items.forEach(function(item) { vkpage.append_to_main_menu(item); });
+    }
+};
 
 dictionary["Popular on last.fm"] = {
     "ru": "Популярное на last.fm",
@@ -225,91 +240,100 @@ function audio_info(div) {
     return { artist: artist, title: title, mp3: mp3 };
 }
 
-function update_audio(div) {
-    if (div.find(".oh-my-audio-mp3").length)
-        return;
+var mp3 = new function() {
 
-    var info = audio_info(div);
+    function update_audio(div) {
 
-    var img_data = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEWascb///9ffZ3///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAXBOJ8AAAAAWJLR0QAiAUdSAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB90FEQ0VLqGKYlMAAAA4SURBVAjXYzBQAgNmBiYIQ4FBCQpADEFBKANTBMYQFASxkBmKgoJCaIoVhVDNUQQpFlJCWApzBgBDTA7y2SUcVwAAAABJRU5ErkJggg==";
+        if (div.find(".oh-my-audio-mp3").length && div.find("input").length)
+            return;
 
-    var a = $("<a>", {
-        href: info.mp3,
-        target: "_blank",
-        title: info.artist + " - " + info.title,
-        class: "play_btn_wrap fl_l oh-my-audio-mp3",
-        style: "padding-left: 0px; padding-right: 0px;",
-    }).append($("<img>", {src: img_data}));
+        var info = audio_info(div);
 
-    div.find(".info").before(a);
-    div.find(".title_wrap b").css("padding-left", "10px");
-    div.find(".info").css("width", "370px");
-}
+        var img_data = "data:image/gif;base64,\
+R0lGODdhEAAQAOMBAJqxxv///199nf///wAAAAAAAAAAAA\
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAEAAQ\
+AAAEJzAAQaulQN5dJ/9bIAZgCY6kiZboyrXj2aqxKYh2fs\
+O14NmZHygTAQA7";
 
-function update_all_audio() {
-    $(".audio").each(function() {
-        update_audio($(this));
-    });
-}
+        if (window.location.pathname == "/audio")
+            div.find(".info").css("width", "375px");
 
-function exactly_selected() {
-    var exactly_checked = $("#oh-my-audio-exactly").attr("checked") !== undefined;
-    var search_notempty = Boolean($("#s_search").val());
-    return exactly_checked && search_notempty;
-}
+        div.find(".title_wrap b").css("padding-left", "10px");
 
-function filter_exactly() {
-    if (!exactly_selected())
-        return;
+        var a = $("<a>", {
+            href: info.mp3,
+            target: "_blank",
+            title: info.artist + " - " + info.title,
+            class: "play_btn_wrap fl_l oh-my-audio-mp3",
+            style: "padding-left: 0px; padding-right: 0px;",
+        });
 
-    var s = $.trim($("#s_search").val()).toLowerCase();
+        a.append($("<img>", {src: img_data}));
+        div.find(".info").before(a);
+    }
 
-    var found = 0;
-
-    $(".audio").each(function() {
-        var info = audio_info($(this));
-        var a = info.artist.toLowerCase();
-        var t =  info.title.toLowerCase();
-        if ((s != a) && (s != t))
-            $(this).remove();
-        else
-            found++;
-    });
-
-    console.log("found", found);
-
-    // if (found < 5)
-    //     Audio.loadRows();
-}
-
-dictionary["exact search"] = {
-    "ru": "точный поиск",
-    "ua": "точный поиск",
+    this.apply = function() {
+        $(".audio").each(function() {
+            try {
+                update_audio($(this));
+            }
+            catch (e) {
+            }
+        });
+    }
 };
 
+var exactly = new function() {
+
+    function active() {
+        return $("#oh-my-audio-exactly").attr("checked") && $("#s_search").val();
+    }
+
+    this.apply = function() {
+        if (!active())
+            return;
+
+        var s = $.trim($("#s_search").val()).toLowerCase();
+
+        $(".audio").each(function() {
+            var info = audio_info($(this));
+            var a = info.artist.toLowerCase();
+            var t =  info.title.toLowerCase();
+            if ((s != a) && (s != t))
+                $(this).remove();
+        });
+    }
+
+    dictionary["exact search"] = {
+        "ru": "точный поиск",
+        "ua": "точный поиск",
+    };
+
+    this.create_checkbox = function() {
+        var c = $('<input >', {
+            id: "oh-my-audio-exactly",
+            type: "checkbox",
+            style: "margin-right: 6px;",
+            click: function() {
+                if (!this.selected)
+                    Audio.searchAudios($("#s_search").val(), "all");
+            },
+        });
+
+        var d = $("<div>").append(c).append(_("exact search"));
+        $("#audio_search_filters").append(d);
+    }
+};
+
+var filters = [exactly, mp3];
+
 function update() {
-    update_all_audio();
-    filter_exactly();
+    filters.forEach(function(f) { f.apply(); });
 }
 
 function init() {
-    create_charts_menu();
-    update_all_audio();
-    $("#s_search").keydown(function() {
-        setTimeout(update, 500);
-    });
-    var a = $('<input >', {
-        id: "oh-my-audio-exactly",
-        type: "checkbox",
-        style: "margin-right: 6px;",
-    });
-    a.click(function() {
-        if (!this.selected)
-            Audio.searchAudios($("#s_search").val(), "all");
-    });
-
-    var d = $("<div>").append(a).append(_("exact search"));
-    $("#audio_search_filters").append(d);
+    charts.create_menu();
+    exactly.create_checkbox();
 }
 
 init();
