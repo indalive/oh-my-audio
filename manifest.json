@@ -9,6 +9,10 @@
       "matches": [ "http://*/*", "https://*/*" ],
       "run_at": "document_end"
    } ],
+   "icons": {
+      "48": "icon48.png",
+      "64": "icon64.png"
+   },
    "converted_from_user_script": true,
    "description": "Cosmic extensions for vk.com/audio",
    "key": "tEgFU2s0ax/MO0PqMb6PZJQtI/JDTBMhoCDVZC4czAY=",
