@@ -5,7 +5,7 @@
       "exclude_globs": [  ],
       "exclude_matches": [  ],
       "include_globs": [ "http://vk.com/*" ],
-      "js": [ "lastfm.api.md5.js", "lastfm.api.js", "jquery.min.js", "oh-my-audio.user.js" ],
+      "js": [ "jquery.min.js", "lastfm.api.md5.js", "lastfm.api.js", "oh-my-audio.user.js" ],
       "matches": [ "http://*/*", "https://*/*" ],
       "run_at": "document_end"
    } ],
@@ -13,6 +13,12 @@
       "48": "icon48.png",
       "64": "icon64.png"
    },
+
+    "permissions": [
+        "http://ws.audioscrobbler.com/*",
+        "http://vk.com/*"
+    ],
+
    "converted_from_user_script": true,
    "description": "Cosmic extensions for vk.com/audio",
    "key": "tEgFU2s0ax/MO0PqMb6PZJQtI/JDTBMhoCDVZC4czAY=",

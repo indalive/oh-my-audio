@@ -105,11 +105,10 @@ function LastFM(options){
 			}
 
 			/* Set callback name and response format. */
-			params.callback = jsonp;
 			params.format   = 'json';
 
 			/* Create JSONP callback function. */
-			window[jsonp] = function(data){
+			var f = function(data){
 				/* Is a cache available?. */
 				if(typeof(cache) != 'undefined'){
 					var expiration = cache.getExpirationTime(params);
@@ -128,39 +127,19 @@ function LastFM(options){
 				else if(typeof(callbacks.success) != 'undefined'){
 					callbacks.success(data);
 				}
-
-				/* Garbage collect. */
-				window[jsonp] = undefined;
-
-				try{
-					delete window[jsonp];
-				}
-				catch(e){
-					/* Nothing. */
-				}
-
-				/* Remove script element. */
-				if(head){
-					head.removeChild(script);
-				}
 			};
 
-			/* Create script element to load JSON data. */
-			var head   = document.getElementsByTagName("head")[0];
-			var script = document.createElement("script");
-
-			/* Build parameter string. */
 			var array = [];
 
 			for(var param in params){
 				array.push(encodeURIComponent(param) + "=" + encodeURIComponent(params[param]));
 			}
 
-			/* Set script source. */
-			script.src = apiUrl + '?' + array.join('&').replace(/%20/g, '+');
+			var src = apiUrl + '?' + array.join('&').replace(/%20/g, '+');
 
-			/* Append script element. */
-			head.appendChild(script);
+            $.getJSON(src, function(data) {
+                f(data);
+            });
 		}
 	};
 

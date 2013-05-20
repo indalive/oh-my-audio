@@ -148,15 +148,10 @@ var vk_audio = new function() {
             offset: 0, id: 0, gid: 0, performer: 0
         };
 
-        ajax.post(Audio.address, query, {
-            onDone: function(res, preload, options) {
-                var tracks = $(res);
-                if (tracks.length)
-                    ready_fn(tracks[0]);
-            },
-            onFail: function() {
-                console.log("vk Audio fail");
-            }
+        $.post(Audio.address, query, function(res) {
+            var tracks = $(res);
+            if (tracks.length)
+                ready_fn(tracks[0]);
         });
     }
 
