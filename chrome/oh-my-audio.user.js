@@ -13,14 +13,35 @@
 // @run-at      document-end
 // ==/UserScript==
 
+(function () {
+
+if (!window.nav) {
+    console.debug("oh-my-audio:", "window.nav undefined");
+    return;
+}
+
+if (!window.Audio) {
+    console.debug("oh-my-audio:", "window.Audio undefined");
+    return;
+}
+
+console.debug("loading", "Oh My Audio!");
+
 var vkpage = new function() {
+
     this.change = function(fn) {
-        function call() {
-            setTimeout(fn, 1000);
-        }
-        var title = document.getElementById("title");
-        if (title)
-            title.addEventListener('DOMSubtreeModified', call);
+        var go = window.nav.go;
+        window.nav.go = function() {
+            var opts = arguments[2];
+            var prev = opts.onDone;
+            opts.onDone = function() {
+                fn();
+                if (prev)
+                    return prev.apply(this, arguments);
+                return false;
+            };
+            return go.apply(this, arguments);
+        };
     }
 
     this.audio_menu_item = function(desc, fn) {
@@ -63,10 +84,12 @@ dictionary = {};
 function _(what) {
     function lang() {
         switch ($("#myprofile").text()) {
-        case "Моя Страница":
-        case "Мой Паспортъ":
-        case "Мое Досье":  return "ru";
-        case "Моя Cторінка": return "ua";
+        case "\u041C\u043E\u044F\u0020\u0421\u0442\u0440\u0430\u043D\u0438\u0446\u0430": // Моя Страница
+        case "\u041C\u043E\u0439\u0020\u041F\u0430\u0441\u043F\u043E\u0440\u0442\u044A": // Мой Паспортъ
+        case "\u041C\u043E\u0435\u0020\u0414\u043E\u0441\u044C\u0435": // Мое Досье
+            return "ru";
+        case "\u041C\u043E\u044F\u0020\u0043\u0442\u043E\u0440\u0456\u043D\u043A\u0430": // Моя Cторінка
+            return "ua";
         default: return "en";
         }
     }
@@ -155,7 +178,7 @@ var vk_audio = new function() {
                     ready_fn(tracks[0]);
             },
             onFail: function() {
-                console.log("vk Audio fail");
+                console.warn("oh-my-audio:", "Audio request failed");
             }
         });
     }
@@ -221,16 +244,16 @@ var charts = new function() {
 };
 
 dictionary["Popular on last.fm"] = {
-    "ru": "Популярное на last.fm",
-    "ua": "Популярное на last.fm",
+    "ru": "\u041F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u043E\u0435\u0020\u043D\u0430\u0020\u006C\u0061\u0073\u0074\u002E\u0066\u006D", // Популярное на last.fm
+    "ua": "\u041F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u043E\u0435\u0020\u043D\u0430\u0020\u006C\u0061\u0073\u0074\u002E\u0066\u006D", // Популярное на last.fm
 };
 dictionary["Loved on last.fm"] = {
-    "ru": "Любимое на last.fm",
-    "ua": "Любимое на last.fm",
+    "ru": "\u041B\u044E\u0431\u0438\u043C\u043E\u0435\u0020\u043D\u0430\u0020\u006C\u0061\u0073\u0074\u002E\u0066\u006D", // Любимое на last.fm
+    "ua": "\u041B\u044E\u0431\u0438\u043C\u043E\u0435\u0020\u043D\u0430\u0020\u006C\u0061\u0073\u0074\u002E\u0066\u006D", // Любимое на last.fm
 };
 dictionary["Hyped on last.fm"] = {
-    "ru": "Набирает популярность на last.fm",
-    "ua": "Набирает популярность на last.fm",
+    "ru": "\u041D\u0430\u0431\u0438\u0440\u0430\u0435\u0442\u0020\u043F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u043E\u0441\u0442\u044C\u0020\u043D\u0430\u0020\u006C\u0061\u0073\u0074\u002E\u0066\u006D", // Набирает популярность на last.fm
+    "ua": "\u041D\u0430\u0431\u0438\u0440\u0430\u0435\u0442\u0020\u043F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u043E\u0441\u0442\u044C\u0020\u043D\u0430\u0020\u006C\u0061\u0073\u0074\u002E\u0066\u006D", // Набирает популярность на last.fm
 };
 
 function audio_info(div) {
@@ -285,6 +308,8 @@ O14NmZHygTAQA7";
 
 var exactly = new function() {
 
+    var self = this;
+
     function active() {
         return $("#oh-my-audio-exactly").attr("checked") && $("#s_search").val();
     }
@@ -305,8 +330,8 @@ var exactly = new function() {
     }
 
     dictionary["exact search"] = {
-        "ru": "точный поиск",
-        "ua": "точный поиск",
+        "ru": "\u0442\u043E\u0447\u043D\u044B\u0439\u0020\u043F\u043E\u0438\u0441\u043A", // точный поиск
+        "ua": "\u0442\u043E\u0447\u043D\u044B\u0439\u0020\u043F\u043E\u0438\u0441\u043A", // точный поиск
     };
 
     this.create_checkbox = function() {
@@ -315,8 +340,10 @@ var exactly = new function() {
             type: "checkbox",
             style: "margin-right: 6px;",
             click: function() {
-                if (!this.selected)
+                if (!this.checked)
                     Audio.searchAudios($("#s_search").val(), "all");
+                else
+                    self.apply();
             },
         });
 
@@ -339,3 +366,5 @@ function init() {
 init();
 vkpage.change(init);
 setInterval(update, 1000);
+
+})();
