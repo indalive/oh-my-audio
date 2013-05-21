@@ -10,8 +10,7 @@
       "run_at": "document_end"
    } ],
    "icons": {
-      "48": "icon48.png",
-      "64": "icon64.png"
+      "128": "icon128.png"
    },
     "web_accessible_resources": [ "lastfm.api.md5.js", "lastfm.api.js", "jquery.min.js", "oh-my-audio.user.js" ],
     "converted_from_user_script": true,
