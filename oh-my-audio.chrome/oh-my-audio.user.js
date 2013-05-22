@@ -33,13 +33,15 @@
             var go = window.nav.go;
             window.nav.go = function() {
                 var opts = arguments[2];
-                var prev = opts.onDone;
-                opts.onDone = function() {
-                    fn();
-                    if (prev)
-                        return prev.apply(this, arguments);
-                    return false;
-                };
+                if (opts != undefined && opts.onDone != undefined) {
+                    var prev = opts.onDone;
+                    opts.onDone = function() {
+                        fn();
+                        if (prev)
+                            return prev.apply(this, arguments);
+                        return false;
+                    };
+                }
                 return go.apply(this, arguments);
             };
         }
