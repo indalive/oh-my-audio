@@ -1,3 +1,5 @@
+// @copyright   2013+, Alexander Korkov korkov@yandex.ru
+
 function inject(src) {
     var s = document.createElement('script');
     s.src = src;
