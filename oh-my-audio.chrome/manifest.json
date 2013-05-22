@@ -3,16 +3,16 @@
     "manifest_version": 2,
 
    "content_scripts": [ {
-      "exclude_globs": [  ],
-      "exclude_matches": [  ],
-      "include_globs": [ "http://vk.com/*" ],
        "js": [ "main.js" ],
-      "matches": [ "http://*/*", "https://*/*" ],
+      "matches": [ "http://vk.com/*" ],
       "run_at": "document_end"
    } ],
    "icons": {
       "128": "img/icon128.png"
    },
+    "permissions": [
+        "tabs"
+    ],
     "web_accessible_resources": [ "lib/jquery.min.js", "lib/lastfm.api.md5.js", "lib/lastfm.api.js", "oh-my-audio.user.js" ],
     "converted_from_user_script": true,
     "description": "Cosmic extensions for vk.com/audio",
