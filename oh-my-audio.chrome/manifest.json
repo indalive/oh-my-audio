@@ -10,9 +10,9 @@
       "run_at": "document_end"
    } ],
    "icons": {
-      "128": "icon128.png"
+      "128": "img/icon128.png"
    },
-    "web_accessible_resources": [ "lastfm.api.md5.js", "lastfm.api.js", "jquery.min.js", "oh-my-audio.user.js" ],
+    "web_accessible_resources": [ "lib/lastfm.api.md5.js", "lib/lastfm.api.js", "lib/jquery.min.js", "oh-my-audio.user.js" ],
     "converted_from_user_script": true,
     "description": "Cosmic extensions for vk.com/audio",
     "key": "tEgFU2s0ax/MO0PqMb6PZJQtI/JDTBMhoCDVZC4czAY=",
