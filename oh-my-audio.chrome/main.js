@@ -7,7 +7,7 @@ function inject(src) {
     };
 }
 
-var scripts = [ "jquery.min.js", "lastfm.api.md5.js", "lastfm.api.js", "oh-my-audio.user.js" ];
+var scripts = [ "lib/jquery.min.js", "lib/lastfm.api.md5.js", "lib/lastfm.api.js", "oh-my-audio.user.js" ];
 scripts.forEach(function(sc) {
     inject(chrome.extension.getURL(sc));
 });
